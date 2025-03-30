@@ -1,0 +1,29 @@
+package main
+
+import (
+	"github.com/sirupsen/logrus"
+	"net/http"
+)
+
+var log = logrus.New()
+
+func main() {
+	
+	log.SetFormatter(&logrus.JSONFormatter{})
+	log.SetLevel(logrus.DebugLevel)
+
+	log.Info("Starting the Go logging service...")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Debug("Received a request")
+		w.Write([]byte("Hello, Logs!"))
+	})
+
+	http.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+		log.Error("An error occurred!")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error logged"))
+	})
+
+	http.ListenAndServe(":8080", nil)
+}
