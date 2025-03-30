@@ -1,0 +1,9 @@
+FROM golang:1.21 AS builder
+WORKDIR /app
+COPY . .
+RUN go mod init logservice && go mod tidy && go build -o logservice
+
+FROM alpine:latest
+WORKDIR /root/
+COPY --from=builder /app/logservice .
+CMD ["./logservice"]
